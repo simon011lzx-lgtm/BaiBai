@@ -1,0 +1,556 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>我们的故事 ♥</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Pacifico&family=Ma+Shan+Zheng&family=Noto+Serif+SC:wght@300;400;600&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
+    :root {
+      --cream:     #F5F5F5;
+      --pink:      #C8C8C8;
+      --rose:      #888888;
+      --deep-rose: #1A1A1A;
+      --peach:     #E0E0E0;
+      --brown:     #1A1A1A;
+      --light-br:  #555555;
+      --white:     #FFFFFF;
+    }
+    html { scroll-behavior: smooth; }
+    body {
+      background: var(--cream);
+      color: var(--brown);
+      font-family: 'Noto Serif SC', 'PingFang SC', serif;
+      overflow-x: hidden;
+    }
+
+    /* ── FLOATING HEARTS ── */
+    #hearts-bg { position:fixed; inset:0; pointer-events:none; z-index:0; overflow:hidden; }
+    .fh {
+      position:absolute; bottom:-40px; opacity:0;
+      animation: floatup linear infinite;
+    }
+    @keyframes floatup {
+      0%   { transform:translateY(0) rotate(0deg);    opacity:0; }
+      8%   { opacity:.18; }
+      90%  { opacity:.09; }
+      100% { transform:translateY(-105vh) rotate(360deg); opacity:0; }
+    }
+
+    .z1 { position:relative; z-index:1; }
+    section { padding:80px 24px; }
+
+    .sec-title {
+      text-align:center;
+      font-family:'Ma Shan Zheng', cursive;
+      font-size:clamp(1.6rem,4vw,2.6rem);
+      color:var(--deep-rose);
+      margin-bottom:55px;
+    }
+    .sec-title::after {
+      content:'';
+      display:block; width:70px; height:3px;
+      margin:14px auto 0; border-radius:2px;
+      background:linear-gradient(90deg,var(--pink),var(--deep-rose));
+    }
+
+    /* ══════════════════════════════
+       HERO
+    ══════════════════════════════ */
+    .hero {
+      min-height:100vh;
+      display:flex; flex-direction:column;
+      align-items:center; justify-content:center;
+      padding:60px 24px 80px;
+      background:radial-gradient(ellipse at 50% 0%, #E8E8E8 0%, var(--cream) 65%);
+    }
+    .hero-dogs { display:flex; align-items:flex-end; gap:8px; margin-bottom:12px; }
+    .dog-bounce { animation:bounce-dog 3.5s ease-in-out infinite; transform-origin:bottom center; }
+    .dog-bounce-alt { animation:bounce-dog 3.5s ease-in-out infinite .8s; transform-origin:bottom center; }
+    @keyframes bounce-dog {
+      0%,100% { transform:translateY(0) rotate(-1.5deg); }
+      50%      { transform:translateY(-8px) rotate(1.5deg); }
+    }
+    .hero-title {
+      font-family:'Pacifico', cursive;
+      font-size:clamp(2.2rem,7vw,4.5rem);
+      color:var(--deep-rose);
+      text-align:center;
+      text-shadow:3px 3px 0 rgba(0,0,0,.08);
+      margin:18px 0 10px;
+    }
+    .hero-sub {
+      font-family:'Ma Shan Zheng', cursive;
+      font-size:clamp(1rem,2.5vw,1.4rem);
+      color:var(--light-br);
+      letter-spacing:4px;
+      text-align:center;
+      margin-bottom:32px;
+    }
+    .hero-quote {
+      font-style:italic;
+      font-size:clamp(.85rem,1.6vw,1rem);
+      color:var(--light-br);
+      text-align:center;
+      max-width:420px;
+      line-height:2;
+      padding:18px 28px;
+      border-left:3px solid var(--pink);
+      border-right:3px solid var(--pink);
+      background:rgba(0,0,0,.04);
+      border-radius:4px;
+    }
+    .scroll-hint { margin-top:42px; font-size:1.6rem; color:var(--pink); animation:bounce-hint 2s ease infinite; }
+    @keyframes bounce-hint { 0%,100%{transform:translateY(0)} 50%{transform:translateY(10px)} }
+
+    /* ══════════════════════════════
+       COUNTER
+    ══════════════════════════════ */
+    .counter-sec {
+      background:linear-gradient(180deg, var(--cream) 0%, #EBEBEB 100%);
+      text-align:center;
+      padding:70px 24px;
+    }
+    .counter-card {
+      background:var(--white);
+      max-width:620px; margin:0 auto;
+      padding:52px 40px;
+      border-radius:28px;
+      box-shadow:0 10px 50px rgba(0,0,0,.10);
+      position:relative; overflow:hidden;
+    }
+    .counter-card::before {
+      content:'♥';
+      position:absolute; font-size:200px;
+      color:var(--pink); opacity:.04;
+      top:-40px; left:-20px;
+      pointer-events:none;
+    }
+    .counter-dog { margin-bottom:20px; }
+    .counter-label {
+      font-family:'Ma Shan Zheng', cursive;
+      font-size:1.5rem; color:var(--deep-rose);
+      margin-bottom:30px;
+      position:relative; z-index:1;
+    }
+    .counter-display {
+      display:flex; justify-content:center;
+      gap:clamp(12px,3vw,28px);
+      margin:0 0 28px;
+      position:relative; z-index:1;
+    }
+    .count-item { display:flex; flex-direction:column; align-items:center; gap:10px; }
+    .count-num {
+      font-family:'Pacifico', cursive;
+      font-size:clamp(1.8rem,5vw,3rem);
+      color:var(--deep-rose);
+      min-width:clamp(60px,12vw,90px);
+      text-align:center;
+      background:var(--cream);
+      border-radius:18px;
+      padding:14px 8px;
+      box-shadow:inset 0 3px 10px rgba(0,0,0,.07), 0 2px 6px rgba(0,0,0,.06);
+      line-height:1;
+    }
+    .count-lbl {
+      font-family:'Ma Shan Zheng', cursive;
+      font-size:1rem; color:var(--light-br);
+    }
+    .counter-since {
+      font-family:'Noto Serif SC', serif;
+      font-size:.95rem; color:var(--light-br);
+      position:relative; z-index:1;
+      letter-spacing:2px;
+    }
+
+    /* ══════════════════════════════
+       GALLERY
+    ══════════════════════════════ */
+    .gallery { background:linear-gradient(180deg, var(--cream) 0%, #EBEBEB 50%, var(--cream) 100%); }
+    .photos-grid {
+      display:grid;
+      grid-template-columns:repeat(auto-fill, minmax(240px,1fr));
+      gap:40px; max-width:1080px; margin:0 auto;
+    }
+    .polaroid {
+      background:var(--white); padding:14px 14px 52px;
+      box-shadow:4px 6px 22px rgba(0,0,0,.12);
+      transition:transform .35s cubic-bezier(.34,1.56,.64,1), box-shadow .35s ease;
+    }
+    .polaroid:nth-child(1){transform:rotate(-2.5deg)}
+    .polaroid:nth-child(2){transform:rotate(1.8deg)}
+    .polaroid:nth-child(3){transform:rotate(-1.2deg)}
+    .polaroid:nth-child(4){transform:rotate(2.2deg)}
+    .polaroid:nth-child(5){transform:rotate(-1.8deg)}
+    .polaroid:nth-child(6){transform:rotate(1.4deg)}
+    .polaroid:hover { transform:rotate(0deg) scale(1.06)!important; box-shadow:8px 12px 36px rgba(0,0,0,.18); z-index:10; }
+    .polaroid img { width:100%; height:300px; object-fit:cover; display:block; image-orientation:from-image; }
+    .polaroid img.rot180 { transform:rotate(180deg); }
+    .polaroid.wide img { height:220px; }
+    .pol-cap { text-align:center; margin-top:14px; font-family:'Ma Shan Zheng', cursive; font-size:.9rem; color:var(--light-br); line-height:1.6; }
+
+    /* ── DIVIDER ── */
+    .dog-divider {
+      display:flex; align-items:center; justify-content:center;
+      gap:18px; padding:8px 0; opacity:.5;
+      position:relative; z-index:1;
+    }
+    .dog-divider::before,.dog-divider::after {
+      content:''; flex:1; max-width:200px; height:1px;
+    }
+    .dog-divider::before { background:linear-gradient(90deg,transparent,var(--pink)); }
+    .dog-divider::after  { background:linear-gradient(90deg,var(--pink),transparent); }
+
+    /* ══════════════════════════════
+       LOVE MESSAGE
+    ══════════════════════════════ */
+    .love-msg { background:linear-gradient(135deg,#EBEBEB 0%,var(--cream) 100%); text-align:center; }
+    .msg-card {
+      background:var(--white); max-width:680px; margin:0 auto;
+      padding:56px 48px; border-radius:20px;
+      box-shadow:0 10px 50px rgba(0,0,0,.08);
+      position:relative; overflow:hidden;
+    }
+    .msg-card::before,.msg-card::after { content:'♥'; position:absolute; font-size:180px; color:var(--pink); opacity:.04; pointer-events:none; }
+    .msg-card::before { top:-30px; left:-20px; }
+    .msg-card::after  { bottom:-30px; right:-20px; }
+    .msg-dog { margin-bottom:32px; }
+    .msg-zh { font-family:'Noto Serif SC',serif; font-size:clamp(.95rem,2vw,1.15rem); line-height:2.4; color:var(--brown); position:relative; z-index:1; }
+    .msg-en { margin-top:30px; font-family:'Pacifico',cursive; font-size:clamp(1rem,2.2vw,1.25rem); color:var(--deep-rose); position:relative; z-index:1; }
+
+    /* ══════════════════════════════
+       VIDEO
+    ══════════════════════════════ */
+    .video-sec { text-align:center; }
+    .video-wrap { display:inline-block; background:var(--white); padding:14px 14px 52px; box-shadow:4px 6px 22px rgba(0,0,0,.12); transform:rotate(-1.2deg); max-width:380px; width:100%; }
+    .video-wrap video { width:100%; display:block; }
+
+    /* ══════════════════════════════
+       FOOTER
+    ══════════════════════════════ */
+    footer {
+      background:linear-gradient(135deg,#3A3A3A 0%,#1A1A1A 100%);
+      color:var(--white); text-align:center;
+      padding:70px 24px 50px;
+      position:relative; z-index:1; overflow:hidden;
+    }
+    footer::before {
+      content:''; position:absolute; inset:0;
+      background:url("data:image/svg+xml,%3Csvg width='50' height='50' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M25 15C25 10 18 8 18 13 18 17 25 22 25 22 25 22 32 17 32 13 32 8 25 10 25 15Z' fill='white' opacity='0.06'/%3E%3C/svg%3E") repeat;
+      pointer-events:none;
+    }
+    .footer-dogs { display:flex; justify-content:center; gap:20px; margin-bottom:28px; position:relative; z-index:1; }
+    .footer-title { font-family:'Pacifico',cursive; font-size:clamp(1.6rem,4vw,2.4rem); margin-bottom:12px; position:relative; z-index:1; }
+    .footer-sub { font-family:'Ma Shan Zheng',cursive; font-size:1.1rem; opacity:.88; letter-spacing:4px; position:relative; z-index:1; }
+
+    @media(max-width:600px) {
+      .photos-grid { grid-template-columns:1fr 1fr; gap:20px; }
+      .msg-card { padding:36px 20px; }
+      .counter-card { padding:40px 20px; }
+      .counter-display { gap:10px; }
+    }
+    @media(max-width:420px) {
+      .photos-grid { grid-template-columns:1fr; max-width:300px; }
+    }
+  </style>
+</head>
+<body>
+
+<div id="hearts-bg" aria-hidden="true"></div>
+
+<!-- ════════════════════════════
+     HERO
+════════════════════════════ -->
+<section class="hero z1">
+  <div class="hero-dogs">
+
+    <!-- WHITE MOCHI DOG (heart eyes) -->
+    <svg class="dog-bounce" width="100" height="112" viewBox="0 0 100 112" fill="none" stroke="#3A3A3A" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+      <!-- ears behind body -->
+      <circle cx="27" cy="22" r="14" fill="#FEFEFE"/>
+      <circle cx="27" cy="22" r="8.5" fill="#DEDEDE" stroke="none"/>
+      <circle cx="73" cy="22" r="14" fill="#FEFEFE"/>
+      <circle cx="73" cy="22" r="8.5" fill="#DEDEDE" stroke="none"/>
+      <!-- body -->
+      <ellipse cx="50" cy="68" rx="43" ry="44" fill="#FEFEFE"/>
+      <!-- paw bumps -->
+      <path d="M24,100 Q34,110 44,100" stroke-width="2"/>
+      <path d="M56,100 Q66,110 76,100" stroke-width="2"/>
+      <!-- heart eyes -->
+      <path d="M34,62 C30,62 27,58 27,55 C27,52 30,50 34,52 C38,50 41,52 41,55 C41,58 38,62 34,62Z" fill="#1A1A1A" stroke="none"/>
+      <path d="M66,62 C62,62 59,58 59,55 C59,52 62,50 66,52 C70,50 73,52 73,55 C73,58 70,62 66,62Z" fill="#1A1A1A" stroke="none"/>
+      <!-- nose -->
+      <ellipse cx="50" cy="71" rx="5.5" ry="3.5" fill="#3A3A3A" stroke="none"/>
+      <!-- mouth -->
+      <path d="M45,76 Q50,82 55,76" stroke-width="2.5"/>
+    </svg>
+
+    <!-- TAN MOCHI DOG (blush) -->
+    <svg class="dog-bounce-alt" width="96" height="110" viewBox="0 0 96 110" fill="none" stroke="#3A3A3A" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+      <!-- floppy ears behind -->
+      <ellipse cx="25" cy="24" rx="13" ry="17" fill="#C8C8C8"/>
+      <ellipse cx="71" cy="24" rx="13" ry="17" fill="#C8C8C8"/>
+      <!-- body -->
+      <ellipse cx="48" cy="67" rx="41" ry="43" fill="#C8C8C8"/>
+      <!-- lighter face area -->
+      <ellipse cx="48" cy="62" rx="28" ry="25" fill="#E0E0E0" stroke="none"/>
+      <!-- paw bumps -->
+      <path d="M22,98 Q32,108 42,98" stroke-width="2"/>
+      <path d="M54,98 Q64,108 74,98" stroke-width="2"/>
+      <!-- eyes -->
+      <circle cx="35" cy="56" r="5.5" fill="#3A3A3A" stroke="none"/>
+      <circle cx="61" cy="56" r="5.5" fill="#3A3A3A" stroke="none"/>
+      <circle cx="37" cy="54" r="2"   fill="white"  stroke="none"/>
+      <circle cx="63" cy="54" r="2"   fill="white"  stroke="none"/>
+      <!-- blush -->
+      <ellipse cx="24" cy="64" rx="8" ry="5.5" fill="#AAAAAA" stroke="none" opacity=".5"/>
+      <ellipse cx="72" cy="64" rx="8" ry="5.5" fill="#AAAAAA" stroke="none" opacity=".5"/>
+      <!-- nose -->
+      <ellipse cx="48" cy="65" rx="5" ry="3.5" fill="#3A3A3A" stroke="none"/>
+      <!-- mouth -->
+      <path d="M43,70 Q48,76 53,70" stroke-width="2.5"/>
+    </svg>
+
+  </div>
+
+  <h1 class="hero-title">我们的故事 ♥</h1>
+  <p class="hero-sub">每一刻都是永恒的记忆</p>
+  <blockquote class="hero-quote">
+    Collecting little moments!<br>
+    Short companionship, permanent memory.
+  </blockquote>
+  <div class="scroll-hint">↓</div>
+</section>
+
+<!-- ════════════════════════════
+     ANNIVERSARY COUNTER
+════════════════════════════ -->
+<section class="counter-sec z1">
+  <div class="counter-card">
+
+    <!-- small mochi dog for decoration -->
+    <div class="counter-dog">
+      <svg width="70" height="80" viewBox="0 0 100 112" fill="none" stroke="#3A3A3A" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <circle cx="27" cy="22" r="14" fill="#FEFEFE"/>
+        <circle cx="27" cy="22" r="8.5" fill="#DEDEDE" stroke="none"/>
+        <circle cx="73" cy="22" r="14" fill="#FEFEFE"/>
+        <circle cx="73" cy="22" r="8.5" fill="#DEDEDE" stroke="none"/>
+        <ellipse cx="50" cy="68" rx="43" ry="44" fill="#FEFEFE"/>
+        <path d="M24,100 Q34,110 44,100" stroke-width="2"/>
+        <path d="M56,100 Q66,110 76,100" stroke-width="2"/>
+        <circle cx="37" cy="58" r="5" fill="#3A3A3A" stroke="none"/>
+        <circle cx="63" cy="58" r="5" fill="#3A3A3A" stroke="none"/>
+        <circle cx="39" cy="56" r="1.8" fill="white" stroke="none"/>
+        <circle cx="65" cy="56" r="1.8" fill="white" stroke="none"/>
+        <ellipse cx="50" cy="70" rx="5.5" ry="3.5" fill="#3A3A3A" stroke="none"/>
+        <path d="M45,75 Q50,81 55,75" stroke-width="2.5"/>
+        <!-- holding small heart -->
+        <path d="M72,38 C70,38 68,40 68,42 C68,45 72,48 72,48 C72,48 76,45 76,42 C76,40 74,38 72,38Z" fill="#CCCCCC" stroke="#3A3A3A" stroke-width="1.5"/>
+      </svg>
+    </div>
+
+    <p class="counter-label">在一起已经 ♡</p>
+
+    <div class="counter-display">
+      <div class="count-item">
+        <span class="count-num" id="cnt-days">0</span>
+        <span class="count-lbl">天</span>
+      </div>
+      <div class="count-item">
+        <span class="count-num" id="cnt-hours">0</span>
+        <span class="count-lbl">时</span>
+      </div>
+      <div class="count-item">
+        <span class="count-num" id="cnt-mins">0</span>
+        <span class="count-lbl">分</span>
+      </div>
+      <div class="count-item">
+        <span class="count-num" id="cnt-secs">0</span>
+        <span class="count-lbl">秒</span>
+      </div>
+    </div>
+
+    <p class="counter-since">2026.02.26 ❤ 至今</p>
+  </div>
+</section>
+
+<!-- ════════════════════════════
+     GALLERY
+════════════════════════════ -->
+<section class="gallery z1">
+  <h2 class="sec-title">我们的相册 ✦</h2>
+  <div class="photos-grid">
+    <div class="polaroid">
+      <img src="./01af25f70b2c79bf3cbfcc7b036ea01.jpg" alt="">
+      <p class="pol-cap">♥ (you) the world ♥</p>
+    </div>
+    <div class="polaroid">
+      <img src="./5cbc4b6334b3c44cc1204f7145eea4f.jpg" alt="">
+      <p class="pol-cap">每一个吻 都是宇宙</p>
+    </div>
+    <div class="polaroid wide">
+      <img src="./9632c9d48e81dd3273561d2302195be.jpg" alt="">
+      <p class="pol-cap">Collecting little moments ✦</p>
+    </div>
+    <div class="polaroid">
+      <img src="./a2f0fcf9fc916a3a35c25e01ff9cc75.jpg" alt="" class="rot180">
+      <p class="pol-cap">属于我们的夜晚 ✨</p>
+    </div>
+    <div class="polaroid">
+      <img src="./ec622022061c5ce51a22fb2d1398c0a.jpg" alt="">
+      <p class="pol-cap">和你在一起的每一刻</p>
+    </div>
+    <div class="polaroid">
+      <img src="./f281d264905ccef825d7211b42b6a95.jpg" alt="">
+      <p class="pol-cap">笑起来最好看 ♡</p>
+    </div>
+  </div>
+</section>
+
+<!-- paw print divider -->
+<div class="dog-divider z1" aria-hidden="true">
+  <svg width="140" height="28" viewBox="0 0 140 28" fill="#3A3A3A" opacity=".3">
+    <ellipse cx="10" cy="16" rx="5" ry="6"/><ellipse cx="5"  cy="8"  rx="3.5" ry="4"/><ellipse cx="15" cy="6"  rx="3.5" ry="4"/><ellipse cx="20" cy="11" rx="3.5" ry="4"/>
+    <ellipse cx="45" cy="16" rx="5" ry="6"/><ellipse cx="40" cy="8"  rx="3.5" ry="4"/><ellipse cx="50" cy="6"  rx="3.5" ry="4"/><ellipse cx="55" cy="11" rx="3.5" ry="4"/>
+    <ellipse cx="80" cy="16" rx="5" ry="6"/><ellipse cx="75" cy="8"  rx="3.5" ry="4"/><ellipse cx="85" cy="6"  rx="3.5" ry="4"/><ellipse cx="90" cy="11" rx="3.5" ry="4"/>
+    <ellipse cx="115" cy="16" rx="5" ry="6"/><ellipse cx="110" cy="8" rx="3.5" ry="4"/><ellipse cx="120" cy="6" rx="3.5" ry="4"/><ellipse cx="125" cy="11" rx="3.5" ry="4"/>
+  </svg>
+</div>
+
+<!-- ════════════════════════════
+     LOVE MESSAGE
+════════════════════════════ -->
+<section class="love-msg z1">
+  <h2 class="sec-title">对你说的话 ♡</h2>
+
+  <div class="msg-dog">
+    <!-- tan dog holding flowers -->
+    <svg width="100" height="118" viewBox="0 0 100 118" fill="none" stroke="#3A3A3A" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+      <ellipse cx="26" cy="26" rx="13" ry="17" fill="#C8C8C8"/>
+      <ellipse cx="74" cy="26" rx="13" ry="17" fill="#C8C8C8"/>
+      <ellipse cx="50" cy="72" rx="41" ry="44" fill="#C8C8C8"/>
+      <ellipse cx="50" cy="66" rx="28" ry="25" fill="#E0E0E0" stroke="none"/>
+      <path d="M22,104 Q32,113 42,104" stroke-width="2"/>
+      <path d="M58,104 Q68,113 78,104" stroke-width="2"/>
+      <!-- heart eyes -->
+      <path d="M35,64 C31,64 28,60 28,57 C28,54 31,52 35,54 C39,52 42,54 42,57 C42,60 39,64 35,64Z" fill="#1A1A1A" stroke="none"/>
+      <path d="M65,64 C61,64 58,60 58,57 C58,54 61,52 65,54 C69,52 72,54 72,57 C72,60 69,64 65,64Z" fill="#1A1A1A" stroke="none"/>
+      <ellipse cx="50" cy="73" rx="5" ry="3.5" fill="#3A3A3A" stroke="none"/>
+      <path d="M45,78 Q50,84 55,78" stroke-width="2.5"/>
+      <!-- flowers -->
+      <line x1="18" y1="54" x2="26" y2="72" stroke-width="2.2"/>
+      <circle cx="18" cy="54" r="7"   fill="#DEDEDE" stroke="#E8437A" stroke-width="1.8"/>
+      <circle cx="10" cy="48" r="5.5" fill="#D0D0D0" stroke="#3A3A3A" stroke-width="1.8"/>
+      <circle cx="26" cy="47" r="5.5" fill="#D0D0D0" stroke="#3A3A3A" stroke-width="1.8"/>
+      <circle cx="18" cy="40" r="5.5" fill="#B8B8B8" stroke="#3A3A3A" stroke-width="1.8"/>
+      <circle cx="18" cy="54" r="2.5" fill="#1A1A1A" stroke="none"/>
+    </svg>
+  </div>
+
+  <div class="msg-card">
+    <p class="msg-zh">
+      遇见你，是我这辈子最美的事。<br>
+      每一张照片，都是我们共同书写的故事。<br>
+      每一个瞬间，都值得被永远珍藏。<br><br>
+      谢谢你出现在我的世界里，<br>
+      让平凡的日子因为你而闪闪发光。<br><br>
+      愿我们的故事，永远继续。
+    </p>
+    <p class="msg-en">You are my favorite adventure ♥</p>
+  </div>
+</section>
+
+<!-- ════════════════════════════
+     VIDEO
+════════════════════════════ -->
+<section class="video-sec z1">
+  <h2 class="sec-title">我们的小电影 ▷</h2>
+  <div class="video-wrap">
+    <video controls loop playsinline preload="metadata">
+      <source src="./5198a9079020a3bdbd5b3a0be9b1e556.mp4" type="video/mp4">
+    </video>
+    <p class="pol-cap">我们的专属记录 🎞</p>
+  </div>
+</section>
+
+<!-- ════════════════════════════
+     FOOTER
+════════════════════════════ -->
+<footer>
+  <div class="footer-dogs" aria-hidden="true">
+    <!-- two small mochi dogs side by side -->
+    <svg width="200" height="90" viewBox="0 0 200 90" fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+      <!-- white dog left -->
+      <circle cx="35" cy="18" r="11" fill="rgba(255,255,255,.9)"/>
+      <circle cx="35" cy="18" r="7"  fill="rgba(255,208,216,.8)" stroke="none"/>
+      <circle cx="65" cy="18" r="11" fill="rgba(255,255,255,.9)"/>
+      <circle cx="65" cy="18" r="7"  fill="rgba(255,208,216,.8)" stroke="none"/>
+      <ellipse cx="50" cy="58" rx="34" ry="33" fill="rgba(255,255,255,.9)"/>
+      <path d="M26,78 Q35,86 44,78" stroke-width="1.8"/>
+      <path d="M56,78 Q65,86 74,78" stroke-width="1.8"/>
+      <path d="M38,48 C34,48 31,44 31,42 C31,39 34,37 38,39 C42,37 45,39 45,42 C45,44 42,48 38,48Z" fill="#1A1A1A" stroke="none"/>
+      <path d="M62,48 C58,48 55,44 55,42 C55,39 58,37 62,39 C66,37 69,39 69,42 C69,44 66,48 62,48Z" fill="#1A1A1A" stroke="none"/>
+      <ellipse cx="50" cy="55" rx="4" ry="2.5" fill="white" stroke="none"/>
+      <path d="M46,59 Q50,64 54,59" stroke-width="2"/>
+      <!-- heart between -->
+      <path d="M101,42 C99,42 97,44 97,46 C97,49 101,53 101,53 C101,53 105,49 105,46 C105,44 103,42 101,42Z" fill="rgba(255,181,194,.8)" stroke="white" stroke-width="1.5"/>
+      <!-- tan dog right -->
+      <ellipse cx="136" cy="20" r="10" rx="10" ry="13" fill="rgba(212,149,106,.9)"/>
+      <ellipse cx="164" cy="20" rx="10" ry="13" fill="rgba(212,149,106,.9)"/>
+      <ellipse cx="150" cy="57" rx="33" ry="32" fill="rgba(212,149,106,.9)"/>
+      <ellipse cx="150" cy="52" rx="22" ry="19" fill="rgba(229,176,138,.9)" stroke="none"/>
+      <path d="M126,77 Q135,85 144,77" stroke-width="1.8"/>
+      <path d="M156,77 Q165,85 174,77" stroke-width="1.8"/>
+      <circle cx="141" cy="46" r="4" fill="white" stroke="none"/>
+      <circle cx="159" cy="46" r="4" fill="white" stroke="none"/>
+      <ellipse cx="133" cy="54" rx="6" ry="4" fill="rgba(255,181,194,.7)" stroke="none"/>
+      <ellipse cx="167" cy="54" rx="6" ry="4" fill="rgba(255,181,194,.7)" stroke="none"/>
+      <ellipse cx="150" cy="55" rx="4" ry="2.5" fill="white" stroke="none"/>
+      <path d="M146,60 Q150,65 154,60" stroke-width="2"/>
+    </svg>
+  </div>
+  <p class="footer-title">永远在一起 ♥</p>
+  <p class="footer-sub">每一天都是新的奇迹</p>
+</footer>
+
+<script>
+  // Floating hearts
+  (function(){
+    const c = document.getElementById('hearts-bg');
+    const syms = ['♥','♡','✦','✿','❀','✽'];
+    const cols = ['#AAAAAA','#777777','#333333','#CCCCCC'];
+    for(let i=0;i<28;i++){
+      const s=document.createElement('span'); s.className='fh';
+      s.textContent=syms[i%syms.length];
+      s.style.left=(Math.random()*100)+'%';
+      s.style.fontSize=(10+Math.random()*18)+'px';
+      s.style.color=cols[Math.floor(Math.random()*cols.length)];
+      s.style.animationDuration=(9+Math.random()*14)+'s';
+      s.style.animationDelay=(Math.random()*12)+'s';
+      c.appendChild(s);
+    }
+  })();
+
+  // Anniversary counter — start: 2026-02-26
+  const START = new Date('2026-02-26T00:00:00');
+  function pad(n){ return String(Math.floor(n)).padStart(2,'0'); }
+  function tick(){
+    const diff = Date.now() - START.getTime();
+    if(diff < 0) return;
+    const secs  = diff / 1000;
+    const mins  = secs  / 60;
+    const hours = mins  / 60;
+    const days  = Math.floor(hours / 24);
+    document.getElementById('cnt-days').textContent  = days;
+    document.getElementById('cnt-hours').textContent = pad(hours % 24);
+    document.getElementById('cnt-mins').textContent  = pad(mins  % 60);
+    document.getElementById('cnt-secs').textContent  = pad(secs  % 60);
+  }
+  tick();
+  setInterval(tick, 1000);
+</script>
+</body>
+</html>
