@@ -1,0 +1,542 @@
+<!DOCTYPE html>
+<html lang="zh-Hans">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>圣诞树默契问答 🎄</title>
+<meta name="description" content="自己出 10 道题，让朋友来猜你的答案，看谁能爬到树顶。">
+<meta name="theme-color" content="#12332a">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#12332a; --bg2:#1c4a3c; --card:#fff8ec; --ink:#2a211c; --muted:#7b6d62;
+  --red:#d8433b; --red-d:#a92f29; --gold:#f2c14e; --gold-d:#c9962a;
+  --green:#2f8f5b; --line:#e6d9c3;
+}
+html,body{min-height:100%}
+body{
+  background:radial-gradient(120% 60% at 50% 0%,var(--bg2),var(--bg) 70%) fixed;
+  color:var(--ink);
+  font-family:-apple-system,BlinkMacSystemFont,"PingFang SC","Hiragino Sans GB","Microsoft YaHei","Noto Sans SC",system-ui,sans-serif;
+  line-height:1.5; -webkit-tap-highlight-color:transparent;
+}
+#snow{position:fixed;inset:0;pointer-events:none;overflow:hidden;z-index:0}
+#snow i{position:absolute;top:-10px;width:6px;height:6px;border-radius:50%;background:#fff;opacity:.5;animation:fall linear infinite}
+@keyframes fall{to{transform:translateY(105vh)}}
+@media (prefers-reduced-motion:reduce){#snow{display:none}}
+main{position:relative;z-index:1;max-width:480px;margin:0 auto;padding:20px 16px 48px}
+.view{display:none}.view.on{display:block}
+h1{color:#fff;font-size:1.6rem;text-align:center;line-height:1.3;margin:8px 0 6px}
+.sub{color:#cfe3d8;text-align:center;font-size:.95rem;margin-bottom:18px}
+.card{background:var(--card);border-radius:18px;padding:16px;margin-bottom:14px;box-shadow:0 6px 0 rgba(0,0,0,.18)}
+.card h2{font-size:1rem;margin-bottom:10px;display:flex;align-items:center;gap:8px}
+.num{display:inline-flex;align-items:center;justify-content:center;width:26px;height:26px;border-radius:50%;background:var(--red);color:#fff;font-size:.85rem;font-weight:700;flex:none}
+label.f{display:block;font-size:.85rem;color:var(--muted);margin:10px 0 4px}
+input[type=text]{
+  width:100%;font:inherit;font-size:16px;color:var(--ink);background:#fff;
+  border:2px solid var(--line);border-radius:12px;padding:10px 12px;outline:none;
+}
+input[type=text]:focus{border-color:var(--gold-d)}
+input.bad{border-color:var(--red)}
+.ans{display:flex;align-items:center;gap:8px;margin-top:8px}
+.ans input[type=radio]{appearance:none;-webkit-appearance:none;flex:none;width:26px;height:26px;border-radius:50%;border:2px solid var(--line);background:#fff;cursor:pointer;position:relative}
+.ans input[type=radio]:checked{border-color:var(--green);background:var(--green)}
+.ans input[type=radio]:checked::after{content:"✓";position:absolute;inset:0;color:#fff;font-size:15px;font-weight:700;display:flex;align-items:center;justify-content:center}
+.hint{font-size:.8rem;color:var(--muted);margin-top:8px}
+.btn{
+  display:block;width:100%;font:inherit;font-size:1.1rem;font-weight:700;color:var(--ink);
+  background:var(--gold);border:0;border-radius:14px;padding:14px;cursor:pointer;
+  box-shadow:0 5px 0 var(--gold-d);text-align:center;text-decoration:none;
+}
+.btn:active{transform:translateY(3px);box-shadow:0 2px 0 var(--gold-d)}
+.btn.red{background:var(--red);color:#fff;box-shadow:0 5px 0 var(--red-d)}
+.btn.red:active{box-shadow:0 2px 0 var(--red-d)}
+.btn.ghost{background:transparent;color:#fff;box-shadow:none;border:2px solid rgba(255,255,255,.45);font-size:.95rem;padding:11px}
+.btn.small{font-size:.9rem;padding:9px;background:#fff;box-shadow:0 3px 0 var(--line);border:2px solid var(--line)}
+.btn+.btn,.btn+.row,.row+.btn{margin-top:12px}
+.row{display:flex;gap:8px}.row>*{flex:1;min-width:0}
+.row .btn{margin-top:0}
+[hidden]{display:none!important}
+.msg{color:var(--red);font-size:.9rem;margin:8px 0;min-height:1.2em;text-align:center}
+.card .msg{margin-bottom:0}
+
+/* tree */
+.tree{position:relative;height:min(44vh,400px);aspect-ratio:3/4;margin:0 auto 12px}
+.tree svg{position:absolute;inset:0;width:100%;height:100%;overflow:visible}
+.ball{
+  position:absolute;width:13%;aspect-ratio:1;border-radius:50%;transform:translate(-50%,-50%);
+  background:radial-gradient(circle at 32% 28%,#ffb3c7,#e8457a 65%);
+  border:2px solid #7a1f3d;color:#fff;font-weight:700;font-size:clamp(11px,3.4vw,15px);
+  display:flex;align-items:center;justify-content:center;
+  transition:left .7s cubic-bezier(.3,1.5,.5,1),top .7s cubic-bezier(.3,1.5,.5,1);
+  box-shadow:0 3px 6px rgba(0,0,0,.35);z-index:2;
+}
+.ball.shake{animation:shake .4s}
+@keyframes shake{25%{margin-left:-6px}75%{margin-left:6px}}
+.star{transition:fill .5s,filter .5s}
+.tree.top .star{fill:#ffe066;filter:drop-shadow(0 0 8px #ffe066)}
+
+.prog{color:#cfe3d8;text-align:center;font-size:.9rem;margin-bottom:8px}
+.qtext{font-size:1.15rem;font-weight:700;text-align:center;margin-bottom:14px;word-break:break-word}
+.opt{
+  display:block;width:100%;font:inherit;font-size:1.05rem;font-weight:600;color:var(--ink);
+  background:#fff;border:2px solid var(--line);border-radius:14px;padding:13px;cursor:pointer;
+  box-shadow:0 4px 0 var(--line);word-break:break-word;
+}
+.opt+.opt{margin-top:10px}
+.opt.right{background:#dff3e6;border-color:var(--green);box-shadow:0 4px 0 var(--green)}
+.opt.wrong{background:#fbe1df;border-color:var(--red);box-shadow:0 4px 0 var(--red)}
+.opt:disabled{cursor:default;color:var(--ink)}
+.big{font-size:2.4rem;font-weight:800;text-align:center;color:var(--red);line-height:1.1}
+.center{text-align:center}
+.mood{display:inline-block;background:var(--gold);border-radius:999px;padding:4px 14px;font-weight:700;font-size:.9rem;margin:8px 0}
+ol.review{list-style:none;font-size:.92rem}
+ol.review li{padding:8px 0;border-top:1px dashed var(--line);display:flex;gap:8px}
+ol.review li:first-child{border-top:0}
+ol.review b{display:block}
+ol.review span{color:var(--muted)}
+ul.board{list-style:none;font-size:.95rem}
+ul.board li{display:flex;justify-content:space-between;padding:6px 0;border-top:1px dashed var(--line)}
+ul.board li:first-child{border-top:0}
+.foot{color:#9dbcae;font-size:.78rem;text-align:center;margin-top:18px}
+</style>
+</head>
+<body>
+<div id="snow" aria-hidden="true"></div>
+<main>
+
+<!-- 出题 -->
+<section class="view" id="v-create">
+  <h1>做一棵你的圣诞树 🎄</h1>
+  <p class="sub">写 10 道关于你的题，每题两个答案。<br>朋友每猜中一题，就往树上爬一层。</p>
+  <div class="card">
+    <label class="f" for="c-name" style="margin-top:0">你的名字</label>
+    <input type="text" id="c-name" maxlength="16" placeholder="比如：Simon">
+    <label class="f" for="c-mood">一句话心情（可不填）</label>
+    <input type="text" id="c-mood" maxlength="24" placeholder="比如：睡到中午 😴">
+  </div>
+  <div id="c-questions"></div>
+  <button class="btn ghost" id="c-sample" type="button">没灵感？空着的题帮我填上示例</button>
+  <p class="msg" id="c-msg" role="alert"></p>
+  <button class="btn" id="c-make" type="button">生成我的链接 🎁</button>
+  <div class="card" id="c-out" hidden style="margin-top:16px">
+    <h2>✅ 链接好了，发给朋友吧</h2>
+    <input type="text" id="c-link" readonly>
+    <div class="row" style="margin-top:10px">
+      <button class="btn small" id="c-copy" type="button">复制链接</button>
+      <a class="btn small" id="c-try" href="#">自己先试玩</a>
+    </div>
+    <p class="hint">题目和答案都存在链接里。改了题目要重新生成链接再发。</p>
+  </div>
+</section>
+
+<!-- 开始 -->
+<section class="view" id="v-intro">
+  <h1 id="i-title"></h1>
+  <p class="sub">10 道关于 <span class="owner"></span> 的题。每猜中一题，你的圣诞球就往上挂一层。</p>
+  <div class="tree" id="i-tree"></div>
+  <div class="card">
+    <div class="center" id="i-moodwrap" hidden><span class="mood" id="i-mood"></span></div>
+    <label class="f" for="i-name">写在圣诞球上的名字</label>
+    <input type="text" id="i-name" maxlength="12" placeholder="你的名字">
+    <p class="msg" id="i-msg" role="alert"></p>
+    <button class="btn red" id="i-go" type="button">开始爬树 🎄</button>
+  </div>
+  <div class="card" id="i-boardwrap" hidden>
+    <h2>🏆 这台设备上的成绩</h2>
+    <ul class="board" id="i-board"></ul>
+  </div>
+  <a class="btn ghost" href="#">我也要出一套题</a>
+</section>
+
+<!-- 答题 -->
+<section class="view" id="v-play">
+  <p class="prog" id="p-prog"></p>
+  <div class="tree" id="p-tree"></div>
+  <div class="card">
+    <p class="qtext" id="p-q"></p>
+    <button class="opt" id="p-a0" type="button"></button>
+    <button class="opt" id="p-a1" type="button"></button>
+  </div>
+</section>
+
+<!-- 结果 -->
+<section class="view" id="v-result">
+  <h1 id="r-title"></h1>
+  <p class="sub" id="r-sub"></p>
+  <div class="tree" id="r-tree"></div>
+  <div class="card center">
+    <div class="big" id="r-score"></div>
+    <p id="r-rank" style="font-weight:700;margin-top:6px"></p>
+  </div>
+  <div id="r-actions">
+    <button class="btn" id="r-share" type="button"></button>
+    <p class="msg" id="r-msg" style="color:#cfe3d8"></p>
+    <div class="row">
+      <button class="btn ghost" id="r-again" type="button">再爬一次</button>
+      <a class="btn ghost" href="#">我也要出题</a>
+    </div>
+  </div>
+  <a class="btn ghost" id="r-play" hidden>我也来爬这棵树</a>
+  <div class="card" style="margin-top:16px">
+    <h2>📋 答题回顾</h2>
+    <ol class="review" id="r-review"></ol>
+  </div>
+  <div class="card" id="r-boardwrap" hidden>
+    <h2>🏆 这台设备上的成绩</h2>
+    <ul class="board" id="r-board"></ul>
+  </div>
+</section>
+
+<!-- 出错 -->
+<section class="view" id="v-error">
+  <h1>这个链接打不开 😢</h1>
+  <p class="sub">链接可能没复制完整，或者浏览器版本太旧。<br>让朋友重新发一次试试。</p>
+  <a class="btn" href="#">我也要出一套题</a>
+</section>
+
+<p class="foot">题目和成绩只保存在链接和你的浏览器里，不会上传到服务器。</p>
+</main>
+
+<script>
+(function(){
+'use strict';
+var N = 10;
+var $ = function(id){ return document.getElementById(id); };
+
+/* ---------- 本地存储（失败也不影响使用） ---------- */
+function lsGet(k, d){ try{ var v = localStorage.getItem(k); return v ? JSON.parse(v) : d; }catch(e){ return d; } }
+function lsSet(k, v){ try{ localStorage.setItem(k, JSON.stringify(v)); }catch(e){} }
+
+/* ---------- 把数据压进链接 ---------- */
+function b64(bytes){
+  var s = ''; for (var i = 0; i < bytes.length; i++) s += String.fromCharCode(bytes[i]);
+  return btoa(s).replace(/\+/g,'-').replace(/\//g,'_').replace(/=+$/,'');
+}
+function unb64(str){
+  var s = atob(str.replace(/-/g,'+').replace(/_/g,'/'));
+  var out = new Uint8Array(s.length); for (var i = 0; i < s.length; i++) out[i] = s.charCodeAt(i);
+  return out;
+}
+async function pipe(bytes, stream){
+  return new Uint8Array(await new Response(new Blob([bytes]).stream().pipeThrough(stream)).arrayBuffer());
+}
+async function pack(obj){
+  var bytes = new TextEncoder().encode(JSON.stringify(obj));
+  if (window.CompressionStream) {
+    try { return 'z' + b64(await pipe(bytes, new CompressionStream('deflate-raw'))); } catch(e){}
+  }
+  return 'r' + b64(bytes);
+}
+async function unpack(str){
+  var bytes = unb64(str.slice(1));
+  if (str[0] === 'z') bytes = await pipe(bytes, new DecompressionStream('deflate-raw'));
+  return JSON.parse(new TextDecoder().decode(bytes));
+}
+function validQuiz(q){
+  return q && typeof q.n === 'string' && Array.isArray(q.q) && q.q.length === N && q.q.every(function(x){
+    return Array.isArray(x) && typeof x[0] === 'string' && typeof x[1] === 'string' && typeof x[2] === 'string' && (x[3] === 0 || x[3] === 1);
+  });
+}
+function quizId(q){
+  var s = JSON.stringify(q), h = 5381;
+  for (var i = 0; i < s.length; i++) h = ((h << 5) + h + s.charCodeAt(i)) >>> 0;
+  return h.toString(36);
+}
+function baseUrl(){ return location.href.split('#')[0]; }
+
+/* ---------- 圣诞树 ---------- */
+var SVGNS = 'http://www.w3.org/2000/svg';
+function el(name, attrs){
+  var e = document.createElementNS(SVGNS, name);
+  for (var k in attrs) e.setAttribute(k, attrs[k]);
+  return e;
+}
+function tier(i){ var yb = 372 - i * 32; return { yb: yb, ya: yb - 62, w: 136 - i * 11 }; }
+function spot(level){
+  if (level <= 0) return { x: 52, y: 386 };
+  var t = tier(level - 1), side = level % 2 ? -1 : 1;
+  return { x: 150 + side * t.w * 0.42, y: t.yb - 16 };
+}
+function makeTree(box){
+  box.textContent = '';
+  var svg = el('svg', { viewBox: '0 0 300 400', 'aria-hidden': 'true' });
+  svg.appendChild(el('ellipse', { cx: 150, cy: 392, rx: 140, ry: 10, fill: '#ffffff', opacity: '.85' }));
+  svg.appendChild(el('rect', { x: 136, y: 366, width: 28, height: 28, rx: 4, fill: '#7a4a2b' }));
+  var lights = ['#f2c14e', '#d8433b', '#7fd1e8', '#ffffff'];
+  for (var i = 0; i < N; i++) {
+    var t = tier(i);
+    svg.appendChild(el('polygon', {
+      points: [150, t.ya, 150 - t.w, t.yb, 150 + t.w, t.yb].join(','),
+      fill: i % 2 ? '#2f8f5b' : '#27784c', stroke: '#1b5a38', 'stroke-width': 4, 'stroke-linejoin': 'round'
+    }));
+    var side = (i + 1) % 2 ? 1 : -1;   // 小灯挂在圣诞球的另一侧
+    svg.appendChild(el('circle', { cx: 150 + side * t.w * 0.5, cy: t.yb - 12, r: 5, fill: lights[i % 4] }));
+    svg.appendChild(el('circle', { cx: 150 - side * t.w * 0.05, cy: t.yb - 9, r: 4, fill: lights[(i + 2) % 4] }));
+  }
+  var star = el('polygon', {
+    'class': 'star', fill: '#b9a15a', stroke: '#8a6a14', 'stroke-width': 2, 'stroke-linejoin': 'round',
+    points: '150,2 156,16 171,17 159,26 163,41 150,33 137,41 141,26 129,17 144,16'
+  });
+  svg.appendChild(star);
+  box.appendChild(svg);
+  var ball = document.createElement('div');
+  ball.className = 'ball';
+  box.appendChild(ball);
+  var api = {
+    setLabel: function(name){ ball.textContent = Array.from(name || '🎄')[0] || '🎄'; },
+    setLevel: function(level){
+      var p = spot(level);
+      ball.style.left = (p.x / 300 * 100) + '%';
+      ball.style.top = (p.y / 400 * 100) + '%';
+      box.classList.toggle('top', level >= N);
+    },
+    shake: function(){ ball.classList.remove('shake'); void ball.offsetWidth; ball.classList.add('shake'); }
+  };
+  api.setLabel(''); api.setLevel(0);
+  return api;
+}
+
+/* ---------- 成绩榜（只在本机） ---------- */
+function boardKey(quiz){ return 'treequiz_board_' + quizId(quiz); }
+function addToBoard(quiz, name, answers, score){
+  var list = lsGet(boardKey(quiz), []);
+  if (!list.some(function(r){ return r.n === name && r.a === answers; })) {
+    list.push({ n: name, a: answers, s: score });
+    lsSet(boardKey(quiz), list);
+  }
+}
+function renderBoard(quiz, wrap, ul){
+  var list = lsGet(boardKey(quiz), []).slice().sort(function(a, b){ return b.s - a.s; });
+  ul.textContent = '';
+  list.forEach(function(r, i){
+    var li = document.createElement('li'), a = document.createElement('span'), b = document.createElement('b');
+    a.textContent = (i === 0 ? '👑 ' : '') + r.n;
+    b.textContent = r.s + ' / ' + N + ' 层';
+    li.appendChild(a); li.appendChild(b); ul.appendChild(li);
+  });
+  wrap.hidden = !list.length;
+}
+
+function show(id){
+  document.querySelectorAll('.view').forEach(function(v){ v.classList.toggle('on', v.id === id); });
+  window.scrollTo(0, 0);
+}
+async function copyText(text, input){
+  try { await navigator.clipboard.writeText(text); return true; } catch(e){}
+  try { input.focus(); input.select(); return document.execCommand('copy'); } catch(e){ return false; }
+}
+
+/* ================= 出题页 ================= */
+var SAMPLES = [
+  ['我更喜欢猫还是狗？','猫','狗'], ['周末我更想？','宅在家','出去玩'],
+  ['我是早起鸟还是夜猫子？','早起鸟','夜猫子'], ['奶茶我选？','全糖','无糖'],
+  ['我更怕？','冷','热'], ['旅行我更想去？','海边','雪山'],
+  ['吃火锅我选？','辣锅','清汤'], ['我回消息一般？','秒回','看心情'],
+  ['我更喜欢的季节？','夏天','冬天'], ['收礼物我更想要？','实用的','有心意的']
+];
+function buildForm(){
+  var box = $('c-questions');
+  for (var i = 0; i < N; i++) {
+    var card = document.createElement('div');
+    card.className = 'card';
+    card.innerHTML =
+      '<h2><span class="num">' + (i + 1) + '</span>第 ' + (i + 1) + ' 题</h2>' +
+      '<input type="text" class="q" maxlength="60" placeholder="问题，比如：' + SAMPLES[i][0] + '" aria-label="第 ' + (i + 1) + ' 题的问题">' +
+      '<div class="ans"><input type="radio" name="ok' + i + '" value="0" checked aria-label="我的答案是第一个"><input type="text" class="a0" maxlength="30" placeholder="答案一" aria-label="答案一"></div>' +
+      '<div class="ans"><input type="radio" name="ok' + i + '" value="1" aria-label="我的答案是第二个"><input type="text" class="a1" maxlength="30" placeholder="答案二" aria-label="答案二"></div>' +
+      (i === 0 ? '<p class="hint">点左边的圆圈，标出哪个是你的答案 ✓</p>' : '');
+    box.appendChild(card);
+  }
+}
+function readForm(){
+  var cards = $('c-questions').children, qs = [];
+  for (var i = 0; i < N; i++) {
+    var c = cards[i];
+    qs.push([c.querySelector('.q').value.trim(), c.querySelector('.a0').value.trim(), c.querySelector('.a1').value.trim(),
+      c.querySelector('input[type=radio]:checked').value === '1' ? 1 : 0]);
+  }
+  return { n: $('c-name').value.trim(), m: $('c-mood').value.trim(), q: qs };
+}
+function fillForm(d){
+  if (!d) return;
+  $('c-name').value = d.n || ''; $('c-mood').value = d.m || '';
+  var cards = $('c-questions').children;
+  (d.q || []).forEach(function(x, i){
+    var c = cards[i]; if (!c) return;
+    c.querySelector('.q').value = x[0] || ''; c.querySelector('.a0').value = x[1] || ''; c.querySelector('.a1').value = x[2] || '';
+    c.querySelectorAll('input[type=radio]')[x[3] === 1 ? 1 : 0].checked = true;
+  });
+}
+function initCreate(){
+  buildForm();
+  fillForm(lsGet('treequiz_draft', null));
+  $('v-create').addEventListener('input', function(e){
+    if (e.target.value.trim()) e.target.classList.remove('bad');
+    lsSet('treequiz_draft', readForm()); $('c-out').hidden = true;
+  });
+  $('c-sample').addEventListener('click', function(){
+    var d = readForm();
+    d.q = d.q.map(function(x, i){ return (x[0] || x[1] || x[2]) ? x : [SAMPLES[i][0], SAMPLES[i][1], SAMPLES[i][2], 0]; });
+    fillForm(d); lsSet('treequiz_draft', d); $('c-out').hidden = true;
+    $('c-questions').querySelectorAll('.bad').forEach(function(x){ x.classList.remove('bad'); });
+  });
+  $('c-make').addEventListener('click', async function(){
+    var d = readForm(), first = null;
+    $('v-create').querySelectorAll('input[type=text]').forEach(function(inp){
+      var bad = !inp.value.trim() && inp.id !== 'c-mood' && inp.id !== 'c-link';
+      inp.classList.toggle('bad', bad);
+      if (bad && !first) first = inp;
+    });
+    if (first) {
+      $('c-msg').textContent = '还有没填的地方，已经用红框标出来了';
+      first.scrollIntoView({ block: 'center', behavior: 'smooth' }); first.focus({ preventScroll: true });
+      return;
+    }
+    $('c-msg').textContent = '';
+    var url = baseUrl() + '#q=' + await pack(d);
+    $('c-link').value = url; $('c-try').href = url; $('c-copy').textContent = '复制链接';
+    $('c-out').hidden = false;
+    $('c-out').scrollIntoView({ block: 'center', behavior: 'smooth' });
+  });
+  $('c-copy').addEventListener('click', async function(){
+    var ok = await copyText($('c-link').value, $('c-link'));
+    $('c-copy').textContent = ok ? '已复制 ✓' : '长按上面的链接手动复制';
+  });
+}
+
+/* ================= 答题 ================= */
+var game = null;
+var playTree = makeTree($('p-tree')), introTree = makeTree($('i-tree')), resultTree = makeTree($('r-tree'));
+
+function showIntro(quiz){
+  game = { quiz: quiz, name: '', idx: 0, level: 0, answers: '' };
+  document.title = quiz.n + ' 邀请你爬圣诞树 🎄';
+  $('i-title').textContent = quiz.n + ' 邀请你爬上圣诞树 🎄';
+  document.querySelectorAll('.owner').forEach(function(e){ e.textContent = quiz.n; });
+  $('i-moodwrap').hidden = !quiz.m; $('i-mood').textContent = quiz.n + ' 的心情：' + quiz.m;
+  $('i-msg').textContent = '';
+  introTree.setLevel(0);
+  renderBoard(quiz, $('i-boardwrap'), $('i-board'));
+  show('v-intro');
+}
+function startGame(){
+  var name = $('i-name').value.trim();
+  if (!name) { $('i-msg').textContent = '先写上你的名字'; $('i-name').focus(); return; }
+  game.name = name; game.idx = 0; game.level = 0; game.answers = '';
+  playTree.setLabel(name); playTree.setLevel(0);
+  show('v-play'); showQuestion();
+}
+function showQuestion(){
+  var q = game.quiz.q[game.idx];
+  $('p-prog').textContent = '第 ' + (game.idx + 1) + ' / ' + N + ' 题 · 已爬 ' + game.level + ' 层';
+  $('p-q').textContent = q[0];
+  [0, 1].forEach(function(k){
+    var b = $('p-a' + k); b.textContent = q[k + 1]; b.className = 'opt'; b.disabled = false;
+  });
+}
+function choose(k){
+  var q = game.quiz.q[game.idx];
+  $('p-a0').disabled = $('p-a1').disabled = true;
+  game.answers += k;
+  $('p-a' + q[3]).classList.add('right');
+  if (k === q[3]) { game.level++; playTree.setLevel(game.level); }
+  else { $('p-a' + k).classList.add('wrong'); playTree.shake(); }
+  $('p-prog').textContent = '第 ' + (game.idx + 1) + ' / ' + N + ' 题 · 已爬 ' + game.level + ' 层';
+  setTimeout(function(){
+    game.idx++;
+    if (game.idx < N) showQuestion();
+    else { addToBoard(game.quiz, game.name, game.answers, game.level); showResult(game.quiz, game.name, game.answers, true); }
+  }, 1200);
+}
+
+/* ================= 结果 ================= */
+function rankText(s){
+  return s === N ? '灵魂知己，树顶的星星归你 ⭐' : s >= 8 ? '超级懂，差一点就到顶了' :
+         s >= 5 ? '还算了解，继续加油' : s >= 3 ? '有点塑料，需要多聊聊' : '咱俩……认识吗？😂';
+}
+function showResult(quiz, name, answers, mine){
+  var score = 0, ol = $('r-review');
+  ol.textContent = '';
+  quiz.q.forEach(function(q, i){
+    var pick = answers[i] === '1' ? 1 : 0, ok = pick === q[3];
+    if (ok) score++;
+    var li = document.createElement('li'), mark = document.createElement('span'), body = document.createElement('div'),
+        b = document.createElement('b'), s = document.createElement('span');
+    mark.textContent = ok ? '✅' : '❌';
+    b.textContent = (i + 1) + '. ' + q[0];
+    s.textContent = ok ? '答对了：' + q[q[3] + 1]
+                       : (mine ? '你' : name) + '选了「' + q[pick + 1] + '」，' + quiz.n + ' 的答案是「' + q[q[3] + 1] + '」';
+    body.appendChild(b); body.appendChild(s); li.appendChild(mark); li.appendChild(body); ol.appendChild(li);
+  });
+  document.title = name + ' 在 ' + quiz.n + ' 的树上爬了 ' + score + ' 层 🎄';
+  $('r-title').textContent = mine ? '爬完啦 🎉' : name + ' 的成绩来了 🎉';
+  $('r-sub').textContent = (mine ? '你' : name) + ' 在 ' + quiz.n + ' 的圣诞树上';
+  $('r-score').textContent = score + ' / ' + N + ' 层';
+  $('r-rank').textContent = rankText(score);
+  $('r-share').textContent = '把成绩发给 ' + quiz.n + ' 💌';
+  $('r-msg').textContent = '';
+  $('r-actions').hidden = !mine;
+  $('r-play').hidden = mine;
+  resultTree.setLabel(name); resultTree.setLevel(0);
+  renderBoard(quiz, $('r-boardwrap'), $('r-board'));
+  show('v-result');
+  setTimeout(function(){ resultTree.setLevel(score); }, 300);
+  pack(quiz).then(function(p){ $('r-play').href = baseUrl() + '#q=' + p; });
+}
+async function shareResult(){
+  var url = baseUrl() + '#r=' + await pack({ z: game.quiz, p: game.name, a: game.answers });
+  var text = game.name + ' 在 ' + game.quiz.n + ' 的圣诞树上爬了 ' + game.level + ' 层 🎄';
+  if (navigator.share) { try { await navigator.share({ title: text, text: text, url: url }); return; } catch(e){ if (e && e.name === 'AbortError') return; } }
+  var tmp = document.createElement('input'); tmp.value = url; tmp.readOnly = true; tmp.style.cssText = 'position:fixed;opacity:0';
+  document.body.appendChild(tmp);
+  var ok = await copyText(url, tmp); tmp.remove();
+  $('r-msg').textContent = ok ? '成绩链接已复制，粘贴发给 ' + game.quiz.n + ' 吧' : '复制失败，请截图发给 ' + game.quiz.n;
+}
+
+/* ================= 路由 ================= */
+async function route(){
+  var h = location.hash;
+  try {
+    if (h.indexOf('#q=') === 0) {
+      var quiz = await unpack(h.slice(3));
+      if (!validQuiz(quiz)) throw new Error('bad quiz');
+      showIntro(quiz);
+    } else if (h.indexOf('#r=') === 0) {
+      var r = await unpack(h.slice(3));
+      if (!validQuiz(r.z) || typeof r.p !== 'string' || !/^[01]{10}$/.test(r.a)) throw new Error('bad result');
+      var score = r.z.q.filter(function(q, i){ return +r.a[i] === q[3]; }).length;
+      addToBoard(r.z, r.p, r.a, score);
+      game = null;
+      showResult(r.z, r.p, r.a, false);
+    } else {
+      document.title = '圣诞树默契问答 🎄';
+      show('v-create');
+    }
+  } catch(e) { show('v-error'); }
+}
+
+$('i-go').addEventListener('click', startGame);
+$('i-name').addEventListener('keydown', function(e){ if (e.key === 'Enter') startGame(); });
+$('p-a0').addEventListener('click', function(){ choose(0); });
+$('p-a1').addEventListener('click', function(){ choose(1); });
+$('r-share').addEventListener('click', shareResult);
+$('r-again').addEventListener('click', function(){ showIntro(game.quiz); });
+window.addEventListener('hashchange', route);
+
+(function snow(){
+  var box = $('snow');
+  for (var i = 0; i < 24; i++) {
+    var f = document.createElement('i'), size = 3 + Math.random() * 5;
+    f.style.cssText = 'left:' + (Math.random() * 100) + '%;width:' + size + 'px;height:' + size + 'px;animation-duration:' +
+      (8 + Math.random() * 10) + 's;animation-delay:-' + (Math.random() * 18) + 's';
+    box.appendChild(f);
+  }
+})();
+
+initCreate();
+route();
+})();
+</script>
+</body>
+</html>
